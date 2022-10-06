@@ -308,7 +308,7 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributedText = NSAttributedString(string: title, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
+        let attributedText = NSAttributedString(string: title ?? "", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
         let textSize = attributedText.boundingRect(with: CGSize(width: textContainerSize.width, height: .greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil).size
 
         var patternImage: UIImage?
