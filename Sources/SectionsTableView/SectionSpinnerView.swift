@@ -1,7 +1,16 @@
-import UIKit
-import UIExtensions
+//
+//  SectionSpinnerView.swift
+//  SectionsTableView
+//
+//  Created by Sun on 2024/8/20.
+//
 
-class SectionSpinnerView: UITableViewHeaderFooterView {
+import UIKit
+
+import UIExtensions
+import SnapKit
+
+public class SectionSpinnerView: UITableViewHeaderFooterView {
 
     private let activityIndicator = UIActivityIndicatorView()
 
@@ -10,16 +19,17 @@ class SectionSpinnerView: UITableViewHeaderFooterView {
         
         contentView.addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints { maker in
-            maker.top.bottom.equalToSuperview().inset(LayoutHelper.instance.marginContentInset)
+            maker.top.bottom.equalToSuperview().inset(LayoutHelper.shared.marginContentInset)
             maker.centerX.equalToSuperview()
         }
     }
     
-    public required init?(coder: NSCoder) {
-        fatalError()
+    @available(*, unavailable)
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    func bind() {
+    public func bind() {
         activityIndicator.startAnimating()
     }
 

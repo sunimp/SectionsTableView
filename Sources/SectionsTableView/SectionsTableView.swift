@@ -1,4 +1,12 @@
+//
+//  SectionsTableView.swift
+//  SectionsTableView
+//
+//  Created by Sun on 2024/8/20.
+//
+
 import UIKit
+
 import SnapKit
 
 public protocol SectionsDataSource: AnyObject {
@@ -47,10 +55,11 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         registerHeaderFooter(forClass: SectionSpinnerView.self)
     }
 
+    @available(*, unavailable)
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     public func reload(animated: Bool = false) {
         if animated {
             reloadAnimated()
@@ -125,8 +134,6 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         }
 
         if !reloadRowTuples.isEmpty {
-//            LogHelper.instance.log(self, "Reload Rows: \(reloadRowTuples.map { "\($1.section):\($1.row)" }.joined(separator: ", "))")
-
             for reloadRowTuple in reloadRowTuples {
                 if let cell = cellForRow(at: reloadRowTuple.1) {
                     sectionDataSource?.unbind(cell: cell)
@@ -138,30 +145,24 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         if !insertSectionsIndexSet.isEmpty || !deleteSectionsIndexSet.isEmpty || !reloadSectionsIndexSet.isEmpty || !moveRowsIndexPaths.isEmpty || !insertRowsIndexPaths.isEmpty || !deleteRowsIndexPaths.isEmpty {
             beginUpdates()
             if !insertSectionsIndexSet.isEmpty {
-//                LogHelper.instance.log(self, "Insert Sections: \(insertSectionsIndexSet.map { "\($0)" }.joined(separator: ", "))")
                 insertSections(insertSectionsIndexSet, with: .top)
             }
             if !deleteSectionsIndexSet.isEmpty {
-//                LogHelper.instance.log(self, "Delete Sections: \(deleteSectionsIndexSet.map { "\($0)" }.joined(separator: ", "))")
                 deleteSections(deleteSectionsIndexSet, with: .none)
             }
             if !reloadSectionsIndexSet.isEmpty {
-//                LogHelper.instance.log(self, "Reload Sections: \(reloadSectionsIndexSet.map { "\($0)" }.joined(separator: ", "))")
                 reloadSections(reloadSectionsIndexSet, with: .automatic)
             }
 
             if !moveRowsIndexPaths.isEmpty {
-//                LogHelper.instance.log(self, "Move Rows: \(moveRowsIndexPaths.map { "\($0.section):\($0.row)---\($1.section):\($1.row)" }.joined(separator: ", "))")
                 for (at, to) in moveRowsIndexPaths {
                     moveRow(at: at, to: to)
                 }
             }
             if !insertRowsIndexPaths.isEmpty {
-//                LogHelper.instance.log(self, "Insert Rows: \(insertRowsIndexPaths.map { "\($0.section):\($0.row)" }.joined(separator: ", "))")
                 insertRows(at: insertRowsIndexPaths, with: .top)
             }
             if !deleteRowsIndexPaths.isEmpty {
-//                LogHelper.instance.log(self, "Delete Rows: \(deleteRowsIndexPaths.map { "\($0.section):\($0.row)" }.joined(separator: ", "))")
                 deleteRows(at: deleteRowsIndexPaths, with: .fade)
                 deleteRowsIndexPaths.forEach { triggerBottomReachedIfRequired(indexPath: $0) }
             }
@@ -203,16 +204,13 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        LogHelper.instance.log("CoreCells", "will Display cell:  \(AppSession.address(of: cell)) - at \(indexPath.row)")
         sections[indexPath.section].rows[indexPath.row].bindCell(cell: cell, animated: false)
     }
 
     open func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        LogHelper.instance.log("CoreCells", "did End Displaying cell:  \(AppSession.address(of: cell)) - at \(indexPath.row)")
         sectionDataSource?.unbind(cell: cell)
     }
 
-    @available(iOS 11, *)
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard sections.count > indexPath.section else { return nil }
         let section = sections[indexPath.section]

@@ -1,3 +1,10 @@
+//
+//  SectionEmptyCell.swift
+//  SectionsTableView
+//
+//  Created by Sun on 2024/8/20.
+//
+
 import UIKit
 
 class SectionEmptyCell: UITableViewCell {
@@ -7,6 +14,7 @@ class SectionEmptyCell: UITableViewCell {
         separatorInset = UIEdgeInsets(top: 0, left: 10000, bottom: 0, right: 0)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

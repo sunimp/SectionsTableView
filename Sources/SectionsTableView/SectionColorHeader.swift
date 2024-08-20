@@ -1,3 +1,10 @@
+//
+//  SectionColorHeader.swift
+//  SectionsTableView
+//
+//  Created by Sun on 2024/8/20.
+//
+
 import UIKit
 
 public class SectionColorHeader: UITableViewHeaderFooterView {
@@ -8,10 +15,8 @@ public class SectionColorHeader: UITableViewHeaderFooterView {
         isUserInteractionEnabled = false
     }
 
+    @available(*, unavailable)
     required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        backgroundView = UIView()
-        isUserInteractionEnabled = false
+        fatalError("init(coder:) has not been implemented")
     }
-
 }
