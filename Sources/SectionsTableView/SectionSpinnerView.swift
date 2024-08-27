@@ -7,8 +7,8 @@
 
 import UIKit
 
-import UIExtensions
 import SnapKit
+import UIExtensions
 
 public class SectionSpinnerView: UITableViewHeaderFooterView {
 
@@ -25,7 +25,7 @@ public class SectionSpinnerView: UITableViewHeaderFooterView {
     }
     
     @available(*, unavailable)
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

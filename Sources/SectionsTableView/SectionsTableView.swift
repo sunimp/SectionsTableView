@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 
+// MARK: - SectionsDataSource
+
 public protocol SectionsDataSource: AnyObject {
     func buildSections() -> [SectionProtocol]
     func unbind(cell: UITableViewCell)
@@ -19,12 +21,14 @@ public protocol SectionsDataSource: AnyObject {
 }
 
 extension SectionsDataSource {
-    public func unbind(cell: UITableViewCell) {}
-    public func onBottomReached() {}
-    public func userDidScroll() {}
-    public func didScroll() {}
-    public func userWillDragging() {}
+    public func unbind(cell _: UITableViewCell) { }
+    public func onBottomReached() { }
+    public func userDidScroll() { }
+    public func didScroll() { }
+    public func userWillDragging() { }
 }
+
+// MARK: - SectionsTableView
 
 open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
 
@@ -56,7 +60,7 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
     }
 
     @available(*, unavailable)
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -94,19 +98,22 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
                 for (oldRowIndex, oldRow) in oldSection.rows.enumerated() {
                     var rowIndex: Int?
                     for (index, row) in section.rows.enumerated() {
-                        if row.id == oldRow.id && usedIndexes.firstIndex(of: index) == nil {
+                        if row.id == oldRow.id, usedIndexes.firstIndex(of: index) == nil {
                             rowIndex = index
                             usedIndexes.append(index)
                             break
                         }
                     }
-                    if let rowIndex = rowIndex {
+                    if let rowIndex {
                         let row = section.rows[rowIndex]
                         if row.hash != oldRow.hash {
                             reloadRowTuples.append((row, IndexPath(row: oldRowIndex, section: oldSectionIndex)))
                         }
                         if rowIndex != oldRowIndex {
-                            moveRowsIndexPaths.append((IndexPath(row: oldRowIndex, section: oldSectionIndex), IndexPath(row: rowIndex, section: sectionIndex)))
+                            moveRowsIndexPaths.append((
+                                IndexPath(row: oldRowIndex, section: oldSectionIndex),
+                                IndexPath(row: rowIndex, section: sectionIndex)
+                            ))
                         }
                     } else {
                         deleteRowsIndexPaths.append(IndexPath(row: oldRowIndex, section: oldSectionIndex))
@@ -142,7 +149,10 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
             }
         }
 
-        if !insertSectionsIndexSet.isEmpty || !deleteSectionsIndexSet.isEmpty || !reloadSectionsIndexSet.isEmpty || !moveRowsIndexPaths.isEmpty || !insertRowsIndexPaths.isEmpty || !deleteRowsIndexPaths.isEmpty {
+        if
+            !insertSectionsIndexSet.isEmpty || !deleteSectionsIndexSet.isEmpty || !reloadSectionsIndexSet
+                .isEmpty || !moveRowsIndexPaths.isEmpty || !insertRowsIndexPaths.isEmpty || !deleteRowsIndexPaths.isEmpty
+        {
             beginUpdates()
             if !insertSectionsIndexSet.isEmpty {
                 insertSections(insertSectionsIndexSet, with: .top)
@@ -164,19 +174,18 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
             }
             if !deleteRowsIndexPaths.isEmpty {
                 deleteRows(at: deleteRowsIndexPaths, with: .fade)
-                deleteRowsIndexPaths.forEach { triggerBottomReachedIfRequired(indexPath: $0) }
+                for deleteRowsIndexPath in deleteRowsIndexPaths { triggerBottomReachedIfRequired(indexPath: deleteRowsIndexPath) }
             }
             endUpdates()
         }
-
     }
 
-    open func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+    open func numberOfSections(in _: UITableView) -> Int {
+        sections.count
     }
 
-    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].rows.count
+    open func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+        sections[section].rows.count
     }
 
     open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -198,20 +207,24 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
                 print("Can't dequeue cell, did you forget to register cell?")
                 return UITableViewCell(style: .default, reuseIdentifier: "")
             }
+
         case .static(let cell):
             return cell
         }
     }
 
-    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         sections[indexPath.section].rows[indexPath.row].bindCell(cell: cell, animated: false)
     }
 
-    open func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt _: IndexPath) {
         sectionDataSource?.unbind(cell: cell)
     }
 
-    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public func tableView(
+        _: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
         guard sections.count > indexPath.section else { return nil }
         let section = sections[indexPath.section]
 
@@ -230,9 +243,15 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
                 handler(true)
             }
             switch rowAction.pattern {
-            case let .text(title, color, icon):
-                action.backgroundColor =  UIColor(patternImage: patternImage(title: title, color: color, icon: icon, rowHeight: row.height))
-            case let .icon(image: image, background: backgroundColor):
+            case .text(let title, let color, let icon):
+                action.backgroundColor = UIColor(patternImage: patternImage(
+                    title: title,
+                    color: color,
+                    icon: icon,
+                    rowHeight: row.height
+                ))
+
+            case .icon(image: let image, background: let backgroundColor):
                 action.image = image
                 action.backgroundColor = backgroundColor
             }
@@ -244,20 +263,20 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         return config
     }
 
-    open func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return sections[section].getHeaderHeight(containerWidth: width)
+    open func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        sections[section].getHeaderHeight(containerWidth: width)
     }
 
-    open func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return sections[section].getFooterHeight(containerWidth: width)
+    open func tableView(_: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        sections[section].getFooterHeight(containerWidth: width)
     }
 
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return sections[section].getHeaderView(tableView: tableView)
+        sections[section].getHeaderView(tableView: tableView)
     }
 
     open func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return sections[section].getFooterView(tableView: tableView)
+        sections[section].getFooterView(tableView: tableView)
     }
 
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -270,14 +289,14 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         }
     }
 
-    open func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    open func scrollViewDidScroll(_: UIScrollView) {
         sectionDataSource?.didScroll()
-        if isDragging && !isDecelerating {
+        if isDragging, !isDecelerating {
             sectionDataSource?.userDidScroll()
         }
     }
 
-    open func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    open func scrollViewWillBeginDragging(_: UIScrollView) {
         sectionDataSource?.userWillDragging()
     }
 
@@ -290,7 +309,7 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
     private func triggerBottomReachedIfRequired(indexPath: IndexPath) {
         let section = sections[indexPath.section]
 
-        if section.paginating && indexPath.row > section.rows.count - 5 {
+        if section.paginating, indexPath.row > section.rows.count - 5 {
             sectionDataSource?.onBottomReached()
         }
     }
@@ -300,27 +319,53 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
         let iconOffset: CGFloat = 14
         let iconSize = CGSize(width: 24, height: 24)
         let textHorizontalMargin: CGFloat = 3
-        let textContainerSize = CGSize(width: containerSize.width - textHorizontalMargin * 2, height: containerSize.height - iconOffset - iconSize.height)
+        let textContainerSize = CGSize(
+            width: containerSize.width - textHorizontalMargin * 2,
+            height: containerSize.height - iconOffset - iconSize.height
+        )
 
         let offsetY = max(0, (rowHeight - containerSize.height) / 2)
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributedText = NSAttributedString(string: title, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
-        let textSize = attributedText.boundingRect(with: CGSize(width: textContainerSize.width, height: .greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil).size
+        let attributedText = NSAttributedString(
+            string: title,
+            attributes: [
+                NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                NSAttributedString.Key.foregroundColor: UIColor.white,
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13),
+            ]
+        )
+        let textSize = attributedText.boundingRect(
+            with: CGSize(width: textContainerSize.width, height: .greatestFiniteMagnitude),
+            options: [.usesFontLeading, .usesLineFragmentOrigin],
+            context: nil
+        ).size
 
         var patternImage: UIImage?
 
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: containerSize.width * 2, height: rowHeight), false, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(
+            CGSize(width: containerSize.width * 2, height: rowHeight),
+            false,
+            UIScreen.main.scale
+        )
         if let context = UIGraphicsGetCurrentContext() {
             context.setFillColor(color.cgColor)
             context.fill(CGRect(x: 0, y: 0, width: containerSize.width * 2, height: rowHeight))
 
-            if let icon = icon {
-                icon.draw(in: CGRect(x: (containerSize.width - icon.size.width) / 2, y: offsetY + iconOffset + (iconSize.height - icon.size.height) / 2, width: icon.size.width, height: icon.size.height))
+            if let icon {
+                icon.draw(in: CGRect(
+                    x: (containerSize.width - icon.size.width) / 2,
+                    y: offsetY + iconOffset + (iconSize.height - icon.size.height) / 2,
+                    width: icon.size.width,
+                    height: icon.size.height
+                ))
             }
 
-            let textPosition = CGPoint(x: (containerSize.width - textSize.width) / 2, y: offsetY + iconOffset + iconSize.height + max(0, textContainerSize.height - textSize.height) / 2)
+            let textPosition = CGPoint(
+                x: (containerSize.width - textSize.width) / 2,
+                y: offsetY + iconOffset + iconSize.height + max(0, textContainerSize.height - textSize.height) / 2
+            )
             attributedText.draw(in: CGRect(origin: textPosition, size: textSize))
 
             patternImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -331,10 +376,14 @@ open class SectionsTableView: UITableView, UITableViewDelegate, UITableViewDataS
 
 }
 
+// MARK: - RowType
+
 public enum RowType {
     case dynamic(reuseIdentifier: String, prepare: (UITableViewCell) -> ())
     case `static`(cell: UITableViewCell)
 }
+
+// MARK: - RowProtocol
 
 public protocol RowProtocol {
     var id: String { get }
@@ -349,6 +398,8 @@ public protocol RowProtocol {
     func onSelect(cell: UITableViewCell)
 }
 
+// MARK: - SectionProtocol
+
 public protocol SectionProtocol {
     var id: String { get }
     var paginating: Bool { get }
@@ -360,6 +411,8 @@ public protocol SectionProtocol {
     func isSameState(with section: SectionProtocol) -> Bool
 }
 
+// MARK: - ViewState
+
 public enum ViewState<T: UITableViewHeaderFooterView>: Equatable {
     case margin(height: CGFloat)
     case marginColor(height: CGFloat, color: UIColor?)
@@ -368,24 +421,26 @@ public enum ViewState<T: UITableViewHeaderFooterView>: Equatable {
     case text(text: String, topMargin: CGFloat, bottomMargin: CGFloat)
     case spinner
 
-    public static func ==(lhs: ViewState, rhs: ViewState) -> Bool {
+    public static func == (lhs: ViewState, rhs: ViewState) -> Bool {
         switch (lhs, rhs) {
-        case let (.margin(heightA), .margin(heightB)):
-            return heightA == heightB
-        case let (.marginColor(heightA, colorA), .marginColor(heightB, colorB)):
-            return heightA == heightB && colorA == colorB
-        case let (.cellType(hashA, _, _), .cellType(hashB, _, _)):
-            return hashA == hashB
-        case let (.text(textA, topMarginA, bottomMarginA), .text(textB, topMarginB, bottomMarginB)):
-            return textA == textB && topMarginA == topMarginB && bottomMarginA == bottomMarginB
+        case (.margin(let heightA), .margin(let heightB)):
+            heightA == heightB
+        case (.marginColor(let heightA, let colorA), .marginColor(let heightB, let colorB)):
+            heightA == heightB && colorA == colorB
+        case (.cellType(let hashA, _, _), .cellType(let hashB, _, _)):
+            hashA == hashB
+        case (.text(let textA, let topMarginA, let bottomMarginA), .text(let textB, let topMarginB, let bottomMarginB)):
+            textA == textB && topMarginA == topMarginB && bottomMarginA == bottomMarginB
         case (.spinner, .spinner):
-            return true
-        case (.static(let viewA, _), .static(let viewB, _)): return viewA == viewB
+            true
+        case (.static(let viewA, _), .static(let viewB, _)): viewA == viewB
         default:
-            return false
+            false
         }
     }
 }
+
+// MARK: - Section
 
 public struct Section<H: UITableViewHeaderFooterView, F: UITableViewHeaderFooterView>: SectionProtocol {
     public let id: String
@@ -394,15 +449,27 @@ public struct Section<H: UITableViewHeaderFooterView, F: UITableViewHeaderFooter
     let footerState: ViewState<F>
     public var rows: [RowProtocol]
 
-    public func getHeaderHeight(containerWidth: CGFloat) -> CGFloat { return getHeight(viewState: headerState, containerWidth: containerWidth) }
-    public func getFooterHeight(containerWidth: CGFloat) -> CGFloat { return getHeight(viewState: footerState, containerWidth: containerWidth) }
+    public func getHeaderHeight(containerWidth: CGFloat) -> CGFloat { getHeight(
+        viewState: headerState,
+        containerWidth: containerWidth
+    ) }
+    public func getFooterHeight(containerWidth: CGFloat) -> CGFloat { getHeight(
+        viewState: footerState,
+        containerWidth: containerWidth
+    ) }
 
     public func isSameState(with section: SectionProtocol) -> Bool {
         guard let section = section as? Section else { return false }
         return footerState == section.footerState && headerState == section.headerState
     }
 
-    public init(id: String, paginating: Bool = false, headerState: ViewState<H> = .margin(height: 0), footerState: ViewState<F> = .margin(height: 0), rows: [RowProtocol] = []) {
+    public init(
+        id: String,
+        paginating: Bool = false,
+        headerState: ViewState<H> = .margin(height: 0),
+        footerState: ViewState<F> = .margin(height: 0),
+        rows: [RowProtocol] = []
+    ) {
         self.id = id
         self.paginating = paginating
         self.headerState = headerState
@@ -411,31 +478,35 @@ public struct Section<H: UITableViewHeaderFooterView, F: UITableViewHeaderFooter
     }
 
     public func getHeaderView(tableView: UITableView) -> UIView? {
-        return getView(tableView: tableView, viewState: headerState)
+        getView(tableView: tableView, viewState: headerState)
     }
 
     public func getFooterView(tableView: UITableView) -> UIView? {
-        return getView(tableView: tableView, viewState: footerState)
+        getView(tableView: tableView, viewState: footerState)
     }
 
     private func getHeight<T>(viewState: ViewState<T>, containerWidth: CGFloat) -> CGFloat {
-        if case let .margin(height) = viewState {
+        if case .margin(let height) = viewState {
             return height
         }
 
-        if case let .marginColor(height, _) = viewState {
+        if case .marginColor(let height, _) = viewState {
             return height
         }
 
-        if case let .cellType(_, _, dynamicHeight) = viewState {
+        if case .cellType(_, _, let dynamicHeight) = viewState {
             return dynamicHeight(containerWidth)
         }
 
-        if case let .text(text, topMargin, bottomMargin) = viewState {
-            return SectionLabelView.height(forContainerWidth: containerWidth, text: text, additionalMargins: topMargin + bottomMargin)
+        if case .text(let text, let topMargin, let bottomMargin) = viewState {
+            return SectionLabelView.height(
+                forContainerWidth: containerWidth,
+                text: text,
+                additionalMargins: topMargin + bottomMargin
+            )
         }
 
-        if case let .static(_, height) = viewState {
+        if case .static(_, let height) = viewState {
             return height
         }
 
@@ -447,33 +518,50 @@ public struct Section<H: UITableViewHeaderFooterView, F: UITableViewHeaderFooter
     }
 
     private func getView<T>(tableView: UITableView, viewState: ViewState<T>) -> UIView? {
-        if case let .cellType(_, binder, _) = viewState, let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: String(describing: T.self)) as? T {
+        if
+            case .cellType(_, let binder, _) = viewState,
+            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: String(describing: T.self)) as? T
+        {
             binder?(view)
             return view
         }
 
-        if case let .text(text, topMargin, _) = viewState, let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionLabelView.self)) as? SectionLabelView {
+        if
+            case .text(let text, let topMargin, _) = viewState,
+            let view = tableView
+                .dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionLabelView.self)) as? SectionLabelView
+        {
             view.bind(title: text, topMargin: topMargin)
             return view
         }
 
-        if case .spinner = viewState, let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionSpinnerView.self)) as? SectionSpinnerView {
+        if
+            case .spinner = viewState,
+            let view = tableView
+                .dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionSpinnerView.self)) as? SectionSpinnerView
+        {
             view.bind()
             return view
         }
 
-        if case let .marginColor(_, color) = viewState, let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionColorHeader.self)) as? SectionColorHeader {
+        if
+            case .marginColor(_, let color) = viewState,
+            let view = tableView
+                .dequeueReusableHeaderFooterView(withIdentifier: String(describing: SectionColorHeader.self)) as? SectionColorHeader
+        {
             view.backgroundView?.backgroundColor = color
             return view
         }
 
-        if case let .static(view: view, _) = viewState {
+        if case .static(view: let view, _) = viewState {
             return view
         }
 
         return nil
     }
 }
+
+// MARK: - Row
 
 public struct Row<T: UITableViewCell>: RowProtocol {
     public let id: String
@@ -487,7 +575,18 @@ public struct Row<T: UITableViewCell>: RowProtocol {
     var bind: ((T, Bool) -> ())?
     var action: ((T) -> ())?
 
-    public init(id: String, hash: String? = nil, height: CGFloat? = nil, separatorInset: UIEdgeInsets? = nil, autoDeselect: Bool = false, rowActionProvider: (() -> [RowAction])? = nil, rowType: RowType? = nil, dynamicHeight: ((CGFloat) -> CGFloat)? = nil, bind: ((T, Bool) -> ())? = nil, action: ((T) -> ())? = nil) {
+    public init(
+        id: String,
+        hash: String? = nil,
+        height: CGFloat? = nil,
+        separatorInset: UIEdgeInsets? = nil,
+        autoDeselect: Bool = false,
+        rowActionProvider: (() -> [RowAction])? = nil,
+        rowType: RowType? = nil,
+        dynamicHeight: ((CGFloat) -> CGFloat)? = nil,
+        bind: ((T, Bool) -> ())? = nil,
+        action: ((T) -> ())? = nil
+    ) {
         self.id = id
         self.hash = hash
         self.height = height ?? 44
@@ -505,7 +604,7 @@ public struct Row<T: UITableViewCell>: RowProtocol {
             bind?(cell, animated)
         }
 
-        if let separatorInset = separatorInset {
+        if let separatorInset {
             cell.separatorInset = separatorInset
         }
     }
@@ -516,15 +615,17 @@ public struct Row<T: UITableViewCell>: RowProtocol {
         }
     }
 
-    static public func empty(id: String, height: CGFloat, backgroundColor: UIColor? = nil) -> RowProtocol {
+    public static func empty(id: String, height: CGFloat, backgroundColor: UIColor? = nil) -> RowProtocol {
         Row<SectionEmptyCell>(id: id, height: height, bind: { cell, _ in
-            if let backgroundColor = backgroundColor {
+            if let backgroundColor {
                 cell.backgroundColor = backgroundColor
             }
         })
     }
 
 }
+
+// MARK: - StaticRow
 
 public class StaticRow: RowProtocol {
     public let id: String
@@ -540,7 +641,17 @@ public class StaticRow: RowProtocol {
 
     private var readyReported = false
 
-    public init(cell: UITableViewCell, id: String, height: CGFloat? = nil, separatorInset: UIEdgeInsets? = nil, autoDeselect: Bool = false, rowActionProvider: (() -> [RowAction])? = nil, dynamicHeight: ((CGFloat) -> CGFloat)? = nil, action: (() -> ())? = nil, onReady: (() -> ())? = nil) {
+    public init(
+        cell: UITableViewCell,
+        id: String,
+        height: CGFloat? = nil,
+        separatorInset: UIEdgeInsets? = nil,
+        autoDeselect: Bool = false,
+        rowActionProvider: (() -> [RowAction])? = nil,
+        dynamicHeight: ((CGFloat) -> CGFloat)? = nil,
+        action: (() -> ())? = nil,
+        onReady: (() -> ())? = nil
+    ) {
         self.id = id
         self.height = height ?? 44
         self.separatorInset = separatorInset
@@ -552,7 +663,7 @@ public class StaticRow: RowProtocol {
         self.onReady = onReady
     }
 
-    public func bindCell(cell: UITableViewCell, animated: Bool) {
+    public func bindCell(cell: UITableViewCell, animated _: Bool) {
         guard !readyReported else {
             return
         }
@@ -563,11 +674,13 @@ public class StaticRow: RowProtocol {
         onReady?()
     }
 
-    public func onSelect(cell: UITableViewCell) {
+    public func onSelect(cell _: UITableViewCell) {
         action?()
     }
 
 }
+
+// MARK: - RowAction
 
 public struct RowAction {
     let pattern: Pattern

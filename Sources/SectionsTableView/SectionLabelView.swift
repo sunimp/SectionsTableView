@@ -7,8 +7,8 @@
 
 import UIKit
 
-import UIExtensions
 import SnapKit
+import UIExtensions
 
 public class SectionLabelView: UITableViewHeaderFooterView {
     private static let font = UIFont.systemFont(ofSize: 13)
@@ -30,7 +30,7 @@ public class SectionLabelView: UITableViewHeaderFooterView {
     }
     
     @available(*, unavailable)
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -43,7 +43,7 @@ public class SectionLabelView: UITableViewHeaderFooterView {
     }
 
     public static func height(forContainerWidth containerWidth: CGFloat, text: String, additionalMargins: CGFloat) -> CGFloat {
-        return ceil(text.height(
+        ceil(text.height(
             forContainerWidth: containerWidth - LayoutHelper.shared.contentMarginWidth,
             font: font
         ) + additionalMargins)

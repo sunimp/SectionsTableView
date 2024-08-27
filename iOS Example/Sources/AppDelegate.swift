@@ -1,3 +1,10 @@
+//
+//  AppDelegate.swift
+//  SectionsTableView-Example
+//
+//  Created by Sun on 2024/8/20.
+//
+
 import UIKit
 
 @UIApplicationMain

@@ -8,7 +8,7 @@ Simple solution for static or paginating table views.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/horizontalsystems/SectionsTableView.Swift.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/sunimp/SectionsTableView.Swift.git", .upToNextMajor(from: "1.0.3"))
 ]
 ```
 
