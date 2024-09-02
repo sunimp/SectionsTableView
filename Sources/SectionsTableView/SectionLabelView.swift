@@ -1,8 +1,7 @@
 //
 //  SectionLabelView.swift
-//  SectionsTableView
 //
-//  Created by Sun on 2024/8/20.
+//  Created by Sun on 2021/11/29.
 //
 
 import UIKit
@@ -11,11 +10,17 @@ import SnapKit
 import UIExtensions
 
 public class SectionLabelView: UITableViewHeaderFooterView {
+    // MARK: Static Properties
+
     private static let font = UIFont.systemFont(ofSize: 13)
     private static let defaultTopInset: CGFloat = 8
 
+    // MARK: Properties
+
     private let label = UILabel()
-    
+
+    // MARK: Lifecycle
+
     override public init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         
@@ -34,6 +39,22 @@ public class SectionLabelView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Static Functions
+
+    public static func height(
+        forContainerWidth containerWidth: CGFloat,
+        text: String,
+        additionalMargins: CGFloat
+    )
+        -> CGFloat {
+        ceil(text.height(
+            forContainerWidth: containerWidth - LayoutHelper.shared.contentMarginWidth,
+            font: font
+        ) + additionalMargins)
+    }
+
+    // MARK: Functions
+
     public func bind(title: String, topMargin: CGFloat) {
         label.text = title
         label.snp.updateConstraints { maker in
@@ -41,12 +62,4 @@ public class SectionLabelView: UITableViewHeaderFooterView {
         }
         layoutIfNeeded()
     }
-
-    public static func height(forContainerWidth containerWidth: CGFloat, text: String, additionalMargins: CGFloat) -> CGFloat {
-        ceil(text.height(
-            forContainerWidth: containerWidth - LayoutHelper.shared.contentMarginWidth,
-            font: font
-        ) + additionalMargins)
-    }
-
 }

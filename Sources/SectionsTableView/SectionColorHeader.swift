@@ -1,14 +1,12 @@
 //
 //  SectionColorHeader.swift
-//  SectionsTableView
 //
-//  Created by Sun on 2024/8/20.
+//  Created by Sun on 2021/11/29.
 //
 
 import UIKit
 
 public class SectionColorHeader: UITableViewHeaderFooterView {
-
     override public init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         backgroundView = UIView()
