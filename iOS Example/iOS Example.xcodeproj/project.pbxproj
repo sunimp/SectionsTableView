@@ -3,12 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		3A39D0842750E0B50022CB8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A39D0812750E0B50022CB8B /* AppDelegate.swift */; };
 		3A39D0852750E0B50022CB8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A39D0822750E0B50022CB8B /* ViewController.swift */; };
+		A46AFF892CBFD97F000086AC /* SectionsTableView in Frameworks */ = {isa = PBXBuildFile; productRef = A46AFF882CBFD97F000086AC /* SectionsTableView */; };
+		A46AFF8C2CBFD9B5000086AC /* SectionsTableView in Frameworks */ = {isa = PBXBuildFile; productRef = A46AFF8B2CBFD9B5000086AC /* SectionsTableView */; };
 		D94502FD261F98A500F6BF2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94502FC261F98A500F6BF2E /* Assets.xcassets */; };
 		D945030C261F99CC00F6BF2E /* SectionsTableView in Frameworks */ = {isa = PBXBuildFile; productRef = D945030B261F99CC00F6BF2E /* SectionsTableView */; };
 /* End PBXBuildFile section */
@@ -16,7 +18,7 @@
 /* Begin PBXFileReference section */
 		3A39D0812750E0B50022CB8B /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3A39D0822750E0B50022CB8B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		D94502F5261F98A400F6BF2E /* SectionsTableView Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SectionsTableView Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D94502F5261F98A400F6BF2E /* SectionsTableView-Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SectionsTableView-Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94502FC261F98A500F6BF2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D9450301261F98A500F6BF2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -26,7 +28,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A46AFF892CBFD97F000086AC /* SectionsTableView in Frameworks */,
 				D945030C261F99CC00F6BF2E /* SectionsTableView in Frameworks */,
+				A46AFF8C2CBFD9B5000086AC /* SectionsTableView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +49,7 @@
 		D94502F6261F98A400F6BF2E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D94502F5261F98A400F6BF2E /* SectionsTableView Demo.app */,
+				D94502F5261F98A400F6BF2E /* SectionsTableView-Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,9 +90,11 @@
 			name = "iOS Example";
 			packageProductDependencies = (
 				D945030B261F99CC00F6BF2E /* SectionsTableView */,
+				A46AFF882CBFD97F000086AC /* SectionsTableView */,
+				A46AFF8B2CBFD9B5000086AC /* SectionsTableView */,
 			);
 			productName = "iOS Example";
-			productReference = D94502F5261F98A400F6BF2E /* SectionsTableView Demo.app */;
+			productReference = D94502F5261F98A400F6BF2E /* SectionsTableView-Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -116,6 +122,9 @@
 				Base,
 			);
 			mainGroup = D94502EC261F98A400F6BF2E;
+			packageReferences = (
+				A46AFF8A2CBFD9B5000086AC /* XCLocalSwiftPackageReference "../../SectionsTableView" */,
+			);
 			productRefGroup = D94502F6261F98A400F6BF2E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -283,7 +292,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "SectionsTableView Demo";
+				PRODUCT_NAME = "SectionsTableView-Example";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -309,7 +318,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "SectionsTableView Demo";
+				PRODUCT_NAME = "SectionsTableView-Example";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -341,7 +350,22 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A46AFF8A2CBFD9B5000086AC /* XCLocalSwiftPackageReference "../../SectionsTableView" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../SectionsTableView;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		A46AFF882CBFD97F000086AC /* SectionsTableView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SectionsTableView;
+		};
+		A46AFF8B2CBFD9B5000086AC /* SectionsTableView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SectionsTableView;
+		};
 		D945030B261F99CC00F6BF2E /* SectionsTableView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SectionsTableView;
