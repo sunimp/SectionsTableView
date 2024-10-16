@@ -1,4 +1,4 @@
-# SectionsTableView.Swift
+# SectionsTableView
 
 Simple solution for static or paginating table views.
 
@@ -14,10 +14,10 @@ Simple solution for static or paginating table views.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/SectionsTableView.Swift.git", .upToNextMajor(from: "1.1.0"))
+    .package(url: "https://github.com/sunimp/SectionsTableView.git", .upToNextMajor(from: "1.0.0"))
 ]
 ```
 
 ## License
 
-`SectionsTableView.Swift` is available under the MIT license. See the LICENSE file for more info.
+`SectionsTableView` is available under the MIT license. See the LICENSE file for more info.
